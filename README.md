@@ -26,9 +26,9 @@ Examples
 ### S3 Object
 
 ```python
-from arnparse import parse
+from arnparse import arnparse
 
-arn = parse('arn:aws:s3:::my_corporate_bucket/exampleobject.png')
+arn = arnparse('arn:aws:s3:::my_corporate_bucket/exampleobject.png')
 
 assert arn.partition == 'aws'
 assert arn.service == 's3'
@@ -41,9 +41,9 @@ assert arn.resource == 'my_corporate_bucket/exampleobject.png'
 ### VPC
 
 ```python
-from arnparse import parse
+from arnparse import arnparse
 
-arn = parse('arn:aws:ec2:us-east-1:123456789012:vpc/vpc-fd580e98')
+arn = arnparse('arn:aws:ec2:us-east-1:123456789012:vpc/vpc-fd580e98')
 
 assert arn.partition == 'aws'
 assert arn.service == 'ec2'
@@ -56,9 +56,9 @@ assert arn.resource == 'vpc-fd580e98'
 ### CloudWatch Alarm
 
 ```python
-from arnparse import parse
+from arnparse import arnparse
 
-arn = parse('arn:aws:cloudwatch:us-east-1:123456789012:alarm:MyAlarmName')
+arn = arnparse('arn:aws:cloudwatch:us-east-1:123456789012:alarm:MyAlarmName')
 
 assert arn.partition == 'aws'
 assert arn.service == 'cloudwatch'
@@ -71,9 +71,9 @@ assert arn.resource == 'MyAlarmName'
 ### SNS Topic
 
 ```python
-from arnparse import parse
+from arnparse import arnparse
 
-arn = parse('arn:aws:sns:*:123456789012:my_corporate_topic')
+arn = arnparse('arn:aws:sns:*:123456789012:my_corporate_topic')
 
 assert arn.partition == 'aws'
 assert arn.service == 'sns'
@@ -86,9 +86,9 @@ assert arn.resource == 'my_corporate_topic'
 ### API Gateway
 
 ```python
-from arnparse import parse
+from arnparse import arnparse
 
-arn = parse('arn:aws:apigateway:us-east-1::a123456789012bc3de45678901f23a45:/test/mydemoresource/*')
+arn = arnparse('arn:aws:apigateway:us-east-1::a123456789012bc3de45678901f23a45:/test/mydemoresource/*')
 
 assert arn.partition == 'aws'
 assert arn.service == 'apigateway'

@@ -21,7 +21,7 @@ class Arn(object):
         self.resource = resource
 
 
-def parse(arn_str):
+def arnparse(arn_str):
     if not arn_str.startswith('arn:'):
         raise MalformedArnError(arn_str)
 

@@ -1,6 +1,6 @@
 import pytest
 
-from arnparse import parse
+from arnparse import arnparse
 
 from arnparse.arnparse import MalformedArnError
 
@@ -8,7 +8,7 @@ from arnparse.arnparse import MalformedArnError
 def test__arnparse__resource_type_with_slash():
     arn_str = 'arn:aws:ec2:us-east-1:123456789012:vpc/vpc-fd580e98'
 
-    arn = parse(arn_str)
+    arn = arnparse(arn_str)
 
     assert arn.partition == 'aws'
     assert arn.service == 'ec2'
@@ -21,7 +21,7 @@ def test__arnparse__resource_type_with_slash():
 def test__arnparse__resource_type_with_colon():
     arn_str = 'arn:aws:codecommit:us-east-1:123456789012:MyDemoRepo'
 
-    arn = parse(arn_str)
+    arn = arnparse(arn_str)
 
     assert arn.partition == 'aws'
     assert arn.service == 'codecommit'
@@ -34,7 +34,7 @@ def test__arnparse__resource_type_with_colon():
 def test__arnparse__resource_type_with_multiple_colons():
     arn_str = 'arn:aws:logs:us-east-1:123456789012:log-group:my-log-group*:log-stream:my-log-stream*'
 
-    arn = parse(arn_str)
+    arn = arnparse(arn_str)
 
     assert arn.partition == 'aws'
     assert arn.service == 'logs'
@@ -47,7 +47,7 @@ def test__arnparse__resource_type_with_multiple_colons():
 def test__arnparse__no_resource_type():
     arn_str = 'arn:aws:cloudwatch:us-east-1:123456789012:alarm:MyAlarmName'
 
-    arn = parse(arn_str)
+    arn = arnparse(arn_str)
 
     assert arn.partition == 'aws'
     assert arn.service == 'cloudwatch'
@@ -60,7 +60,7 @@ def test__arnparse__no_resource_type():
 def test__arnparse__resource_with_single_slash():
     arn_str = 'arn:aws:kinesisvideo:us-east-1:123456789012:stream/example-stream-name/0123456789012'
 
-    arn = parse(arn_str)
+    arn = arnparse(arn_str)
 
     assert arn.partition == 'aws'
     assert arn.service == 'kinesisvideo'
@@ -73,7 +73,7 @@ def test__arnparse__resource_with_single_slash():
 def test__arnparse__resource_with_multiple_slashes():
     arn_str = 'arn:aws:macie:us-east-1:123456789012:trigger/example61b3df36bff1dafaf1aa304b0ef1a975/alert/example8780e9ca227f98dae37665c3fd22b585'
 
-    arn = parse(arn_str)
+    arn = arnparse(arn_str)
 
     assert arn.partition == 'aws'
     assert arn.service == 'macie'
@@ -86,7 +86,7 @@ def test__arnparse__resource_with_multiple_slashes():
 def test__arnparse__no_region__no_acount_id():
     arn_str = 'arn:aws:s3:::my_corporate_bucket'
 
-    arn = parse(arn_str)
+    arn = arnparse(arn_str)
 
     assert arn.partition == 'aws'
     assert arn.service == 's3'
@@ -99,7 +99,7 @@ def test__arnparse__no_region__no_acount_id():
 def test__arnparse__spaces():
     arn_str = 'arn:aws:artifact:::report-package/Certifications and Attestations/SOC/*'
 
-    arn = parse(arn_str)
+    arn = arnparse(arn_str)
 
     assert arn.partition == 'aws'
     assert arn.service == 'artifact'
@@ -112,7 +112,7 @@ def test__arnparse__spaces():
 def test__arnparse__wildcard():
     arn_str = 'arn:aws:ec2:us-east-1:123456789012:instance/*'
 
-    arn = parse(arn_str)
+    arn = arnparse(arn_str)
 
     assert arn.partition == 'aws'
     assert arn.service == 'ec2'
@@ -125,7 +125,7 @@ def test__arnparse__wildcard():
 def test__arnparse__double_wildcard():
     arn_str = 'arn:aws:events:us-east-1:*:*'
 
-    arn = parse(arn_str)
+    arn = arnparse(arn_str)
 
     assert arn.partition == 'aws'
     assert arn.service == 'events'
@@ -138,7 +138,7 @@ def test__arnparse__double_wildcard():
 def test__malformed_arn__no_arn_prefix():
     arn_str = 'something:aws:s3:::my_corporate_bucket'
     with pytest.raises(MalformedArnError) as exc_info:
-        parse(arn_str)
+        arnparse(arn_str)
 
     assert exc_info.value.arn_str == arn_str
 
@@ -146,7 +146,7 @@ def test__malformed_arn__no_arn_prefix():
 def test__malformed_arn__empty_string():
     arn_str = ''
     with pytest.raises(MalformedArnError) as exc_info:
-        parse(arn_str)
+        arnparse(arn_str)
 
     assert exc_info.value.arn_str == arn_str
 
@@ -159,7 +159,7 @@ def test__api_gateway():
     # Case 1
     arn_str = 'arn:aws:apigateway:us-east-1::a123456789012bc3de45678901f23a45:/test/mydemoresource/*'
 
-    arn = parse(arn_str)
+    arn = arnparse(arn_str)
 
     assert arn.partition == 'aws'
     assert arn.service == 'apigateway'
@@ -171,7 +171,7 @@ def test__api_gateway():
     # Case 2
     arn_str = 'arn:aws:execute-api:us-east-1:123456789012:8kjmp19d1h/*/*/*/*'
 
-    arn = parse(arn_str)
+    arn = arnparse(arn_str)
 
     assert arn.partition == 'aws'
     assert arn.service == 'execute-api'
@@ -185,7 +185,7 @@ def test__sns():
     # Case 1
     arn_str = 'arn:aws:sns:*:123456789012:my_corporate_topic'
 
-    arn = parse(arn_str)
+    arn = arnparse(arn_str)
 
     assert arn.partition == 'aws'
     assert arn.service == 'sns'
@@ -197,7 +197,7 @@ def test__sns():
     # Case2
     arn_str = 'arn:aws:sns:us-east-1:123456789012:my_corporate_topic:02034b43-fefa-4e07-a5eb-3be56f8c54ce'
 
-    arn = parse(arn_str)
+    arn = arnparse(arn_str)
 
     assert arn.partition == 'aws'
     assert arn.service == 'sns'
@@ -211,7 +211,7 @@ def test__s3():
     # Case 1
     arn_str = 'arn:aws:s3:::my_corporate_bucket/exampleobject.png'
 
-    arn = parse(arn_str)
+    arn = arnparse(arn_str)
 
     assert arn.partition == 'aws'
     assert arn.service == 's3'
@@ -223,7 +223,7 @@ def test__s3():
     # Case 2
     arn_str = 'arn:aws:s3:::my_corporate_bucket/*'
 
-    arn = parse(arn_str)
+    arn = arnparse(arn_str)
 
     assert arn.partition == 'aws'
     assert arn.service == 's3'
@@ -235,7 +235,7 @@ def test__s3():
     # Case 3
     arn_str = 'arn:aws:s3:::my_corporate_bucket/Development/*'
 
-    arn = parse(arn_str)
+    arn = arnparse(arn_str)
 
     assert arn.partition == 'aws'
     assert arn.service == 's3'

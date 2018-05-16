@@ -1,1 +1,1 @@
-from .arnparse import parse
+from .arnparse import arnparse
