@@ -1,9 +1,12 @@
 .PHONY: build publish-test
 
 clean:
-	@rm -dr build dist
+	-@rm -dr build dist
 
-build:
+check-tools-versions:
+	python check_tools_version.py
+
+build: check-tools-versions
 	@python setup.py sdist
 	@python setup.py bdist_wheel
 
