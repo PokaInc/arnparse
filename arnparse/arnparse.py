@@ -26,16 +26,13 @@ def arnparse(arn_str):
         raise MalformedArnError(arn_str)
 
     elements = arn_str.split(':', 5)
-
-    resource = elements[5]
-    resource_type = None
-
     service = elements[2]
-    if service not in ['s3', 'sns', 'apigateway', 'execute-api']:
-        if '/' in resource:
-            resource_type, resource = resource.split('/', 1)
-        elif ':' in resource:
-            resource_type, resource = resource.split(':', 1)
+    resource = elements[5]
+
+    if service in ['s3', 'sns', 'apigateway', 'execute-api']:
+        resource_type = None
+    else:
+        resource_type, resource = _parse_resource(resource)
 
     return Arn(
         partition=elements[1],
@@ -45,3 +42,19 @@ def arnparse(arn_str):
         resource_type=resource_type,
         resource=resource,
     )
+
+
+def _parse_resource(resource):
+    first_separator_index = -1
+    for idx, c in enumerate(resource):
+        if c in (':', '/'):
+            first_separator_index = idx
+            break
+
+    if first_separator_index != -1:
+        c = resource[first_separator_index]
+        resource_type, resource = resource.split(c, 1)
+    else:
+        resource_type = None
+
+    return resource_type, resource
