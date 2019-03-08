@@ -52,8 +52,8 @@ def _parse_resource(resource):
             break
 
     if first_separator_index != -1:
-        c = resource[first_separator_index]
-        resource_type, resource = resource.split(c, 1)
+        separator = resource[first_separator_index]
+        resource_type, resource = resource.split(separator, 1)
     else:
         resource_type = None
 
