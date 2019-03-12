@@ -1,8 +1,57 @@
 import pytest
 
 from arnparse import arnparse
-
 from arnparse.arnparse import MalformedArnError
+
+
+def test__definition():
+    arn = arnparse('arn:partition:service:region:account-id:resource')
+    assert arn.partition == 'partition'
+    assert arn.service == 'service'
+    assert arn.region == 'region'
+    assert arn.account_id == 'account-id'
+    assert arn.resource_type is None
+    assert arn.resource == 'resource'
+
+    arn = arnparse('arn:partition:service:region:account-id:resourcetype/resource')
+    assert arn.partition == 'partition'
+    assert arn.service == 'service'
+    assert arn.region == 'region'
+    assert arn.account_id == 'account-id'
+    assert arn.resource_type == 'resourcetype'
+    assert arn.resource == 'resource'
+
+    arn = arnparse('arn:partition:service:region:account-id:resourcetype/resource/qualifier')
+    assert arn.partition == 'partition'
+    assert arn.service == 'service'
+    assert arn.region == 'region'
+    assert arn.account_id == 'account-id'
+    assert arn.resource_type == 'resourcetype'
+    assert arn.resource == 'resource/qualifier'
+
+    arn = arnparse('arn:partition:service:region:account-id:resourcetype/resource:qualifier')
+    assert arn.partition == 'partition'
+    assert arn.service == 'service'
+    assert arn.region == 'region'
+    assert arn.account_id == 'account-id'
+    assert arn.resource_type == 'resourcetype'
+    assert arn.resource == 'resource:qualifier'
+
+    arn = arnparse('arn:partition:service:region:account-id:resourcetype:resource')
+    assert arn.partition == 'partition'
+    assert arn.service == 'service'
+    assert arn.region == 'region'
+    assert arn.account_id == 'account-id'
+    assert arn.resource_type == 'resourcetype'
+    assert arn.resource == 'resource'
+
+    arn = arnparse('arn:partition:service:region:account-id:resourcetype:resource:qualifier')
+    assert arn.partition == 'partition'
+    assert arn.service == 'service'
+    assert arn.region == 'region'
+    assert arn.account_id == 'account-id'
+    assert arn.resource_type == 'resourcetype'
+    assert arn.resource == 'resource:qualifier'
 
 
 def test__arnparse__resource_type_with_slash():
@@ -243,3 +292,42 @@ def test__s3():
     assert arn.account_id is None
     assert arn.resource_type is None
     assert arn.resource == 'my_corporate_bucket/Development/*'
+
+
+def test__cloudwatch_logs():
+    arn_str = 'arn:aws:logs:us-east-1:123456789012:log-group:/aws/lambda/my-function:*'
+
+    arn = arnparse(arn_str)
+
+    assert arn.partition == 'aws'
+    assert arn.service == 'logs'
+    assert arn.region == 'us-east-1'
+    assert arn.account_id == '123456789012'
+    assert arn.resource_type == 'log-group'
+    assert arn.resource == '/aws/lambda/my-function:*'
+
+
+def test__secrets_manager():
+    arn_str = 'arn:aws:secretsmanager:us-east-1:123456789012:secret:myfolder/MyFirstSecret-ocq1Wq'
+
+    arn = arnparse(arn_str)
+
+    assert arn.partition == 'aws'
+    assert arn.service == 'secretsmanager'
+    assert arn.region == 'us-east-1'
+    assert arn.account_id == '123456789012'
+    assert arn.resource_type == 'secret'
+    assert arn.resource == 'myfolder/MyFirstSecret-ocq1Wq'
+
+
+def test__batch():
+    arn_str = 'arn:aws:batch:us-east-1:123456789012:job-definition/my-job-definition:1'
+
+    arn = arnparse(arn_str)
+
+    assert arn.partition == 'aws'
+    assert arn.service == 'batch'
+    assert arn.region == 'us-east-1'
+    assert arn.account_id == '123456789012'
+    assert arn.resource_type == 'job-definition'
+    assert arn.resource == 'my-job-definition:1'
